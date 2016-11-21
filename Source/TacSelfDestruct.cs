@@ -44,6 +44,9 @@ namespace Tac
         [KSPField(isPersistant = true)]
         public bool canStage = true;
 
+        [KSPField(isPersistant = true)]
+        public int stagingMode = (int)StagingMode.SelfDestruct;
+
         [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Countdown"),
          UI_Toggle(scene = UI_Scene.All, enabledText = "", disabledText = "")]
         public bool showCountdown = true;
@@ -85,7 +88,15 @@ namespace Tac
             this.Log("Activating!");
             if (canStage && countDownInitiated == 0.0f)
             {
-                ExplodeAllEvent();
+                switch ((StagingMode)stagingMode)
+                {
+                    case StagingMode.SelfDestruct:
+                        ExplodeAllEvent();
+                        break;
+                    case StagingMode.DetonateParent:
+                        DetonateParentEvent();
+                        break;
+                }
             }
         }
 
@@ -124,8 +135,23 @@ namespace Tac
             UpdateStagingEvents();
         }
 
+        [KSPEvent(active = false, guiActive = true, guiActiveEditor = true, guiName = "Mode: Detonate Parent")]
+        public void DetonateParentOnStaging()
+        {
+            stagingMode = (int)StagingMode.SelfDestruct;
+            UpdateStagingModeEvents();
+        }
+
+        [KSPEvent(active = false, guiActive = true, guiActiveEditor = true, guiName = "Mode: Self Destruct")]
+        public void SelfDestructOnStaging()
+        {
+            stagingMode = (int)StagingMode.DetonateParent;
+            UpdateStagingModeEvents();
+        }
+
         private void UpdateStagingEvents()
         {
+            UpdateStagingModeEvents();
             if (HighLogic.LoadedSceneIsEditor)
             {
                 if (canStage)
@@ -146,6 +172,25 @@ namespace Tac
             }
         }
 
+        private void UpdateStagingModeEvents()
+        {
+            Events["DetonateParentOnStaging"].active = false;
+            Events["SelfDestructOnStaging"].active = false;
+
+            if (canStage)
+            {
+                switch ((StagingMode)stagingMode)
+                {
+                    case StagingMode.SelfDestruct:
+                        Events["SelfDestructOnStaging"].active = true;
+                        break;
+                    case StagingMode.DetonateParent:
+                        Events["DetonateParentOnStaging"].active = true;
+                        break;
+                }
+            }
+        }
+
         [KSPEvent(active = false, guiActive = true, guiActiveUnfocused = true, guiName = "Self Destruct!", unfocusedRange = 8.0f)]
         public void ExplodeAllEvent()
         {
@@ -157,6 +202,13 @@ namespace Tac
         [KSPEvent(active = false, guiActive = true, guiActiveUnfocused = true, guiName = "Explode!", unfocusedRange = 8.0f)]
         public void ExplodeEvent()
         {
+            part.explode();
+        }
+
+        [KSPEvent(active = false, guiActive = true, guiActiveUnfocused = true, guiName = "Detonate parent!", unfocusedRange = 8.0f)]
+        public void DetonateParentEvent()
+        {
+            part.parent.explode();
             part.explode();
         }
 
@@ -177,6 +229,15 @@ namespace Tac
             }
         }
 
+        [KSPAction("Detonate parent!")]
+        public void ExplodeParentAction(KSPActionParam param)
+        {
+            if (countDownInitiated == 0.0f)
+            {
+                DetonateParentEvent();
+            }
+        }
+
         [KSPAction("Explode!")]
         public void ExplodeAction(KSPActionParam param)
         {
@@ -188,11 +249,13 @@ namespace Tac
 
         private void UpdateSelfDestructEvents()
         {
+            UpdateStagingModeEvents();
             if (countDownInitiated == 0.0f)
             {
                 // countdown has not been started
                 Events["ExplodeAllEvent"].active = true;
                 Events["ExplodeEvent"].active = true;
+                Events["DetonateParentEvent"].active = true;
                 Events["AbortSelfDestruct"].active = false;
             }
             else
@@ -200,6 +263,7 @@ namespace Tac
                 // countdown has been started
                 Events["ExplodeAllEvent"].active = false;
                 Events["ExplodeEvent"].active = false;
+                Events["DetonateParentEvent"].active = false;
                 Events["AbortSelfDestruct"].active = true;
             }
         }
@@ -282,6 +346,12 @@ namespace Tac
                         remaining, ScreenMessageStyle.UPPER_CENTER);
                 }
             }
+        }
+
+        private enum StagingMode
+        {
+            SelfDestruct = 0,
+            DetonateParent = 1            
         }
     }
 }
