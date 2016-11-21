@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using KSP.UI.Screens;
 
 namespace Tac
 {
@@ -105,9 +106,9 @@ namespace Tac
         public void EnableStaging()
         {
             part.deactivate();
-            part.inverseStage = Math.Min(Staging.lastStage, part.inverseStage);
+            part.inverseStage = Math.Min(  StageManager.LastStage, part.inverseStage);
             part.stackIcon.CreateIcon();
-            Staging.SortIcons();
+            StageManager.Instance.SortIcons(true);
 
             canStage = true;
             UpdateStagingEvents();
@@ -117,7 +118,7 @@ namespace Tac
         public void DisableStaging()
         {
             part.stackIcon.RemoveIcon();
-            Staging.SortIcons();
+            StageManager.Instance.SortIcons(true);
 
             canStage = false;
             UpdateStagingEvents();
@@ -206,7 +207,7 @@ namespace Tac
         private IEnumerator<WaitForSeconds> DoSelfDestruct()
         {
             ScreenMessage msg = null;
-            if (showCountdown && RenderingManager.fetch.enabled)
+            if (showCountdown /*&& RenderingManager.fetch.enabled */)
             {
                 msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated.", timeDelay, ScreenMessageStyle.UPPER_CENTER);
             }
@@ -259,7 +260,7 @@ namespace Tac
             if (msg != null)
             {
                 // If it is still supposed to be displayed
-                if (showCountdown && RenderingManager.fetch.enabled)
+                if (showCountdown /* && RenderingManager.fetch.enabled */)
                 {
                     // Update the countdown message
                     msg.message = "Self destruct sequence initiated: " + remaining.ToString("#0");
@@ -274,7 +275,7 @@ namespace Tac
             else
             {
                 // If it should be displayed now. Maybe the UI was unhidden or the user changed showCountdown?
-                if (showCountdown && RenderingManager.fetch.enabled)
+                if (showCountdown /* && RenderingManager.fetch.enabled */)
                 {
                     // Show the countdown message
                     msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated: " + remaining.ToString("#0"),
