@@ -1,0 +1,5 @@
+1.6.1
+	Added new part:  RSO Flight Termination System Unit
+	Adjusted values in X-1100 to make it available in lower level
+	Renamed source directory
+	Moved parts into subdirectory
