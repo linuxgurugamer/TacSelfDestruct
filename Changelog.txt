@@ -3,3 +3,7 @@
 	Adjusted values in X-1100 to make it available in lower level
 	Renamed source directory
 	Moved parts into subdirectory
+
+1/6/2
+	Made countdown work in staging
+	Fixed display of countdown on screen
