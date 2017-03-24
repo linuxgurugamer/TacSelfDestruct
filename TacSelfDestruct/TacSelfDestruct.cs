@@ -54,10 +54,11 @@ namespace Tac
         private float countDownInitiated = 0.0f;
         private bool staged = false;
         private bool abortCountdown = false;
+        private bool countDownActive = false;
 
         public override void OnAwake()
         {
-            this.Log("OnAwake");
+           // this.Log("OnAwake");
         }
 
         public override void OnStart(PartModule.StartState state)
@@ -81,7 +82,7 @@ namespace Tac
 
         public override void OnInitialize()
         {
-            this.Log("OnInitialize");
+           // this.Log("OnInitialize");
         }
 
         public override void OnActive()
@@ -89,6 +90,7 @@ namespace Tac
             this.Log("Activating!");
             if (canStage && countDownInitiated == 0.0f)
             {
+                Debug.Log("Tac.OnActive");
                 countDownInitiated = Time.time;
                 StartCoroutine(DoSelfDestruct());
                 staged = true;
@@ -202,6 +204,7 @@ namespace Tac
         public void ExplodeAllEvent()
         {
             countDownInitiated = Time.time;
+            Debug.Log("Tac.ExplodeAllEvent");
             StartCoroutine(DoSelfDestruct());
             UpdateSelfDestructEvents();
         }
@@ -228,12 +231,14 @@ namespace Tac
         [KSPAction("Self Destruct!")]
         public void ExplodeAllAction(KSPActionParam param)
         {
+            countDownActive = true;
             if (countDownInitiated == 0.0f)
             {
                 countDownInitiated = Time.time;
                 StartCoroutine(DoSelfDestruct());
                 UpdateSelfDestructEvents();
             }
+            
         }
 
         [KSPAction("Detonate parent!")]
@@ -278,16 +283,22 @@ namespace Tac
         private IEnumerator<WaitForSeconds> DoSelfDestruct()
         {
             ScreenMessage msg = null;
-            if (showCountdown /*&& RenderingManager.fetch.enabled */)
+            if (showCountdown)
             {
+                Debug.Log("Tac.DoSelfDestruct 1");
                 msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated.",1.0f, ScreenMessageStyle.UPPER_CENTER);
+                Debug.Log("Tac.DoSelfDestruct");
             }
 
             while ((Time.time - countDownInitiated) < timeDelay && !abortCountdown)
             {
                 float remaining = timeDelay - (Time.time - countDownInitiated);
-                UpdateCountdownMessage(ref msg, remaining);
-                ScreenMessages.PostScreenMessage(msg.message, 1.0f, ScreenMessageStyle.UPPER_CENTER);
+                if (showCountdown)
+                {
+                    UpdateCountdownMessage(ref msg, remaining);
+                    Debug.Log("Tac.DoSelfDestruct 2");
+                    ScreenMessages.PostScreenMessage(msg.message, 1.0f, ScreenMessageStyle.UPPER_CENTER);
+                }
                 yield return new WaitForSeconds(1.0f);
             }
 
@@ -320,13 +331,13 @@ namespace Tac
             else
             {
                 // reset
-                if (msg != null)
+                if (countDownActive)
                 {
                     msg.startTime = Time.time;
                     msg.duration = 5.0f;
                     msg.message = "Self destruct sequence stopped.";
                 }
-
+                countDownActive = false;
                 part.deactivate();
                 countDownInitiated = 0.0f;
                 abortCountdown = false;
@@ -336,11 +347,12 @@ namespace Tac
 
         private void UpdateCountdownMessage(ref ScreenMessage msg, float remaining)
         {
+            Debug.Log("UpdatecountdownMessage, countdownActive: " + countDownActive.ToString());
             // If the countdown message is currently being displayed
-            if (msg != null)
+            //if (countDownActive)
             {
                 // If it is still supposed to be displayed
-                if (showCountdown /* && RenderingManager.fetch.enabled */)
+                if (showCountdown)
                 {
                     // Update the countdown message
                     msg.message = "Self destruct sequence initiated: " + remaining.ToString("#0");
@@ -353,10 +365,11 @@ namespace Tac
                     msg = null;
                 }
             }
+#if false
             else
             {
                 // If it should be displayed now. Maybe the UI was unhidden or the user changed showCountdown?
-                if (showCountdown /* && RenderingManager.fetch.enabled */)
+                if (showCountdown)
                 {
                     // Show the countdown message
                     msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated: " + remaining.ToString("#0"),
@@ -364,6 +377,7 @@ namespace Tac
                     Debug.Log("Updating message 2");
                 }
             }
+#endif
         }
 
         private enum StagingMode

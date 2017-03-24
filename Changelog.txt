@@ -4,6 +4,9 @@
 	Renamed source directory
 	Moved parts into subdirectory
 
-1/6/2
+1.6.2
 	Made countdown work in staging
 	Fixed display of countdown on screen
+
+1.6.3
+	Fixed self-destruct not working if display was hidden
