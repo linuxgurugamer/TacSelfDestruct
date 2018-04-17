@@ -1,15 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TacSelfDestruct", "TacSelfDestruct.csproj", "{510B7AC3-7DF6-4027-ABED-9C75DE7C5661}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TacSelfDestruct", "TacSelfDestruct\TacSelfDestruct.csproj", "{510B7AC3-7DF6-4027-ABED-9C75DE7C5661}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0ECB2FCB-D618-46A1-A97B-2FAB104E3838}"
 	ProjectSection(SolutionItems) = preProject
 		buildRelease.bat = buildRelease.bat
-		..\Changelog.txt = ..\Changelog.txt
+		Changelog.txt = Changelog.txt
 		deploy.bat = deploy.bat
+		jenkins.txt = jenkins.txt
+		LICENSE.txt = LICENSE.txt
+		Readme.md = Readme.md
 		TacSelfDestruct.version = TacSelfDestruct.version
 	EndProjectSection
 EndProject
@@ -26,5 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2AF623A-B7A9-4A73-8E97-BF9190BF652A}
 	EndGlobalSection
 EndGlobal
