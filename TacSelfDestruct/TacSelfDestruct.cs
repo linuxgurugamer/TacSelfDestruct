@@ -47,6 +47,9 @@ namespace Tac
         [KSPField(isPersistant = true)]
         public int stagingMode = (int)StagingMode.SelfDestruct;
 
+        [KSPField]
+        public bool addPawIdent = false;
+
         [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Countdown"),
          UI_Toggle(scene = UI_Scene.All, enabledText = "Visible", disabledText = "Hidden")]
         public bool showCountdown = true;
@@ -79,7 +82,15 @@ namespace Tac
             UpdateSelfDestructEvents();
             GameEvents.onVesselChange.Add(OnVesselChange);
         }
-
+        // OnStart isn't called in the Editor, so these need to be in Start
+        void Start()
+        {
+            if (addPawIdent)
+            {
+                Events["EnableStaging"].guiName = "TacSelfDestruct: Enable Staging";
+                Events["DisableStaging"].guiName = "TacSelfDestruct: Disable Staging";
+            }
+        }
         public override void OnInitialize()
         {
            // this.Log("OnInitialize");

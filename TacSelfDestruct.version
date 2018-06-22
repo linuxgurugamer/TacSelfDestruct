@@ -4,13 +4,13 @@
   "DOWNLOAD": "https://github.com/linuxgurugamer/TacSelfDestruct/releases",
   "GITHUB": {
     "USERNAME": "linuxgurugamer",
-    "REPOSITORY": "KerbalSlingshotter"
+    "REPOSITORY": "TacSelfDestruct"
   },
   "VERSION": {
     "MAJOR": 1,
     "MINOR": 6,
-    "PATCH": 5,
-    "BUILD": 1
+    "PATCH": 6,
+    "BUILD": 0
   },
   "KSP_VERSION": {
     "MAJOR": 1,
