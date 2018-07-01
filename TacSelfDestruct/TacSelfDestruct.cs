@@ -61,7 +61,7 @@ namespace Tac
 
         public override void OnAwake()
         {
-           // this.Log("OnAwake");
+            // this.Log("OnAwake");
         }
 
         public override void OnStart(PartModule.StartState state)
@@ -93,7 +93,7 @@ namespace Tac
         }
         public override void OnInitialize()
         {
-           // this.Log("OnInitialize");
+            // this.Log("OnInitialize");
         }
 
         public override void OnActive()
@@ -137,7 +137,7 @@ namespace Tac
         public void EnableStaging()
         {
             part.deactivate();
-            part.inverseStage = Math.Min(  StageManager.LastStage, part.inverseStage);
+            part.inverseStage = Math.Min(StageManager.LastStage, part.inverseStage);
             part.stackIcon.CreateIcon();
             StageManager.Instance.SortIcons(true);
 
@@ -249,7 +249,7 @@ namespace Tac
                 StartCoroutine(DoSelfDestruct());
                 UpdateSelfDestructEvents();
             }
-            
+
         }
 
         [KSPAction("Detonate parent!")]
@@ -297,7 +297,7 @@ namespace Tac
             if (showCountdown)
             {
                 Debug.Log("Tac.DoSelfDestruct 1");
-                msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated.",1.0f, ScreenMessageStyle.UPPER_CENTER);
+                msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated.", 1.0f, ScreenMessageStyle.UPPER_CENTER);
                 Debug.Log("Tac.DoSelfDestruct");
             }
 
@@ -318,23 +318,35 @@ namespace Tac
                 if (staged)
                 {
                     if ((StagingMode)stagingMode == StagingMode.DetonateParent)
-                        {
+                    {
                         DetonateParentEvent();
                         yield break;
-                    }                    
+                    }
                 }
+
                 while (vessel.parts.Count > 0)
                 {
                     // We do not want to blow up the root part nor the self destruct part until last.
-                    Part part = vessel.parts.Find(p => p != vessel.rootPart && p != this.part && !p.children.Any());
+                    // also, ignore the various LES parts, in case they are there and waiting to react to an explosion
+                    Part part = vessel.parts.Find(p => p != vessel.rootPart && p != this.part && !p.children.Any() &&
+                        p.partInfo.name != "pkLES.EscapeMk1v2" && p.partInfo.name != "pkLES.mk2" && p.partInfo.name != "pkLES.mk2.noBPC" &&
+                        p.partInfo.name != "LaunchEscapeSystem"
+                    );
                     if (part != null)
                     {
                         part.explode();
+                        // Do a yield here in case something else (ie:  Bob's Panic Box) needs to react to the part exploding
+                        yield return null;
                     }
                     else
                     {
                         // Explode the rest of the parts
-                        vessel.parts.ForEach(p => p.explode());
+                        foreach (var p in vessel.parts)
+                        {
+                            p.explode();
+                            // Do a yield here in case something else (ie:  Bob's Panic Box) needs to react to the part exploding
+                            yield return null;
+                        }
                     }
                     yield return new WaitForSeconds(0.1f);
                 }
@@ -394,7 +406,7 @@ namespace Tac
         private enum StagingMode
         {
             SelfDestruct = 0,
-            DetonateParent = 1            
+            DetonateParent = 1
         }
     }
 }

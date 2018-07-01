@@ -27,3 +27,7 @@
 	Added new field:
 		addPawIdent = true
 	If true, the PAW field is prepended with TacSelfDestruct
+
+1.6.7
+	Added parts to ignore for the initial part explosion, various LaunchEscapeSystem parts
+	Added yields to allow other mods to react to the initial explosions (ie:  Bob's Panic Box)
