@@ -36,6 +36,11 @@ namespace Tac
 {
     public static class Logging
     {
+        public static void Log(string message)
+        {
+            Debug.Log("-INFO- " + Time.time.ToString("0.00") + "]: " + message);
+        }
+
         public static void Log(this UnityEngine.Object obj, string message)
         {
             Debug.Log("-INFO- " + obj.GetType().FullName + "[" + obj.GetInstanceID().ToString("X") + "][" + Time.time.ToString("0.00") + "]: " + message, obj);

@@ -101,7 +101,6 @@ namespace Tac
             this.Log("Activating!");
             if (canStage && countDownInitiated == 0.0f)
             {
-                Debug.Log("Tac.OnActive");
                 countDownInitiated = Time.time;
                 StartCoroutine(DoSelfDestruct());
                 staged = true;
@@ -215,7 +214,7 @@ namespace Tac
         public void ExplodeAllEvent()
         {
             countDownInitiated = Time.time;
-            Debug.Log("Tac.ExplodeAllEvent");
+            Logging.Log("Tac.ExplodeAllEvent");
             StartCoroutine(DoSelfDestruct());
             UpdateSelfDestructEvents();
         }
@@ -296,9 +295,7 @@ namespace Tac
             ScreenMessage msg = null;
             if (showCountdown)
             {
-                Debug.Log("Tac.DoSelfDestruct 1");
                 msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated.", 1.0f, ScreenMessageStyle.UPPER_CENTER);
-                Debug.Log("Tac.DoSelfDestruct");
             }
 
             while ((Time.time - countDownInitiated) < timeDelay && !abortCountdown)
@@ -307,7 +304,6 @@ namespace Tac
                 if (showCountdown)
                 {
                     UpdateCountdownMessage(ref msg, remaining);
-                    Debug.Log("Tac.DoSelfDestruct 2");
                     ScreenMessages.PostScreenMessage(msg.message, 1.0f, ScreenMessageStyle.UPPER_CENTER);
                 }
                 yield return new WaitForSeconds(1.0f);
@@ -341,9 +337,9 @@ namespace Tac
                     else
                     {
                         // Explode the rest of the parts
-                        foreach (var p in vessel.parts)
+                        while (vessel.parts.Count > 0)                           
                         {
-                            p.explode();
+                            vessel.parts[0].explode();
                             // Do a yield here in case something else (ie:  Bob's Panic Box) needs to react to the part exploding
                             yield return null;
                         }
@@ -379,7 +375,6 @@ namespace Tac
                 {
                     // Update the countdown message
                     msg.message = "Self destruct sequence initiated: " + remaining.ToString("#0");
-                    Debug.Log("Updating message 1");
                 }
                 else
                 {

@@ -1,3 +1,5 @@
+
+
 1.6.1
 	Added new part:  RSO Flight Termination System Unit
 	Adjusted values in X-1100 to make it available in lower level
@@ -34,3 +36,8 @@
 
 1.6.7.1
 	Version bump for 1.5 rebuild
+
+1.6.8
+	Fixed bug causing some parts to not be destroyed
+	Removed max version from .version file
+	Removed some log spam
