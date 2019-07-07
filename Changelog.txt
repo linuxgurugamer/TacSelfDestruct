@@ -41,3 +41,8 @@
 	Fixed bug causing some parts to not be destroyed
 	Removed max version from .version file
 	Removed some log spam
+
+1.6.9
+	Version bump for 1.7.2
+	Updated AssemblyVersion.tt
+	Deleted some old code

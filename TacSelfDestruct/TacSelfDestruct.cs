@@ -383,19 +383,6 @@ namespace Tac
                     msg = null;
                 }
             }
-#if false
-            else
-            {
-                // If it should be displayed now. Maybe the UI was unhidden or the user changed showCountdown?
-                if (showCountdown)
-                {
-                    // Show the countdown message
-                    msg = ScreenMessages.PostScreenMessage("Self destruct sequence initiated: " + remaining.ToString("#0"),
-                        remaining, ScreenMessageStyle.UPPER_CENTER);
-                    Debug.Log("Updating message 2");
-                }
-            }
-#endif
         }
 
         private enum StagingMode
